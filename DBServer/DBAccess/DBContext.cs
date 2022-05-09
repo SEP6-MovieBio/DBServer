@@ -41,8 +41,8 @@ namespace DBServer.DBAccess
 
             while (reader.Read())
             {
-                MovieInfo movieInfo = new MovieInfo(reader.GetString(0), reader.GetDecimal(1), reader.GetString(2),
-                    reader.GetDouble(3), reader.GetInt32(4));
+                MovieInfo movieInfo = new MovieInfo(reader.GetString(0)== null?"Unknown":reader.GetString(0), reader.GetDecimal(1) == null? 0: reader.GetDecimal(1), reader.GetString(2)== null?"Unknown":reader.GetString(2),
+                    reader.GetDouble(3) == null?0:reader.GetDouble(3), reader.GetInt32(4)== null?0:reader.GetInt32(4));
                 list.Add(movieInfo);
             }
 

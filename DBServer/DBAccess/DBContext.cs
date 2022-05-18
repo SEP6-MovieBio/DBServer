@@ -13,7 +13,7 @@ namespace DBServer.DBAccess
         {
             string connectionString;
             SqlConnection connection;
-            NetworkCredential creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"), Environment.GetEnvironmentVariable("DbPassword"));
+            NetworkCredential creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
 
             SecureString secureString = creds.SecurePassword;
             secureString.MakeReadOnly();
@@ -33,7 +33,7 @@ namespace DBServer.DBAccess
 
             connection.Open();
 
-            sql = "Select title, [year], director, rating, votes from moviedb.dbo.movieinfo";
+            sql = "Select top(10) title, [year], director, rating, votes from moviedb.dbo.movieinfo";
             
             command = new SqlCommand(sql, connection);
             
@@ -41,8 +41,8 @@ namespace DBServer.DBAccess
 
             while (reader.Read())
             {
-                MovieInfo movieInfo = new MovieInfo(reader.GetString(0)== null?"Unknown":reader.GetString(0), reader.GetDecimal(1) == null? 0: reader.GetDecimal(1), reader.GetString(2)== null?"Unknown":reader.GetString(2),
-                    reader.GetDouble(3) == null?0:reader.GetDouble(3), reader.GetInt32(4)== null?0:reader.GetInt32(4));
+                MovieInfo movieInfo = new MovieInfo(reader.IsDBNull(0)?"Unknown":reader.GetString(0), reader.IsDBNull(1)? 0: reader.GetDecimal(1), reader.IsDBNull(2)?"Unknown":reader.GetString(2),
+                    reader.IsDBNull(3)?0:reader.GetSqlSingle(3).Value, reader.IsDBNull(4)?0:reader.GetInt32(4));
                 list.Add(movieInfo);
             }
 

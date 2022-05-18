@@ -1,8 +1,10 @@
-﻿namespace DBServer.DBAccess
+﻿using System;
+
+namespace DBServer.DBAccess
 {
     public class MovieInfo
     {
-        public MovieInfo(string Title, decimal Year, string Director, double Rating, int Votes)
+        public MovieInfo(string Title, decimal Year, string Director, float Rating, int Votes)
         {
             this.Title = Title;
             this.Director = Director;

@@ -10,7 +10,7 @@ namespace DBServer.Controllers
         public class MovieInfoController : ControllerBase
         {
                 [HttpGet]
-                public List<MovieInfo> Get()
+                public List<MovieInfo> GetMovieinfo()
                 {
                         DBContext dbContext = new DBContext();
                         

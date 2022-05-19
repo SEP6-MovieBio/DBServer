@@ -18,7 +18,7 @@ namespace DBServer.Controllers
             return dbContext.ValidateLogin(u.username, u.hash);
         }
 
-        [Route("[controller]/info")]
+        [Route("/userInfo")]
         [HttpGet]
         public UserInfo GetInfo([FromQuery] string username)
         {

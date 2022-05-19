@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using DBServer.DBAccess;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,10 +22,10 @@ namespace DBServer.Controllers
 
         [Route("/userInfo")]
         [HttpGet]
-        public UserInfo GetInfo([FromQuery] string username)
+        public async Task<IActionResult> GetInfo([FromQuery] string username)
         {
             DBContext dbContext = new DBContext();
-            return dbContext.GetUserInfo(username);
+            return new OkObjectResult(dbContext.GetUserInfo(username));
         }
         
     }

@@ -27,6 +27,23 @@ namespace DBServer.Controllers
             DBContext dbContext = new DBContext();
             return new OkObjectResult(dbContext.GetUserInfo(username));
         }
+
+        [Route("postinfo")]
+        [HttpPost]
+        public async Task<IActionResult> PostInfo([FromBody] JsonElement userInfo)
+        {
+            DBContext dbContext = new DBContext();
+
+            return new OkObjectResult(dbContext.PostBiography(JsonSerializer.Deserialize<UserInfo>(userInfo.GetRawText())));
+        }
+        [Route("postHash")]
+        [HttpPost]
+        public async Task<IActionResult> PostPassHash([FromBody] JsonElement user)
+        {
+            DBContext dbContext = new DBContext();
+
+            return new OkObjectResult(dbContext.PostPassHash(JsonSerializer.Deserialize<User>(user.GetRawText())));
+        }
         
     }
 }

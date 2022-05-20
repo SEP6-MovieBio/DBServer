@@ -13,9 +13,10 @@ namespace DBServer.DBAccess
         private string connectionString;
         public DBContext()
         {
-            creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
-            
-            connectionString = Environment.GetEnvironmentVariable("connString");
+            //creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
+            creds = new NetworkCredential("ad","ThisisSep6");
+            connectionString = "Data Source=dbsep6.database.windows.net;initial Catalog=moviedb";
+            //connectionString = Environment.GetEnvironmentVariable("connString");
             
         }
 
@@ -76,8 +77,7 @@ namespace DBServer.DBAccess
                 SqlConnection connection;
                 SecureString secureString = creds.SecurePassword;
                 secureString.MakeReadOnly();
-
-                connectionString = Environment.GetEnvironmentVariable("connString");
+                
                
 
                 connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
@@ -162,6 +162,87 @@ namespace DBServer.DBAccess
             {
                 userInfo = new UserInfo(biography:e.Message.ToString());
                 return userInfo;
+
+            }
+        }
+
+        public bool PostBiography(UserInfo userInfo)
+        {
+            string sql = "Update moviedb.[dbo].[UserInfo] set [biography] = '"+ userInfo.biography + "' where username = '" + userInfo.username + "'";
+            try
+            {
+                
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+                bool isCorrectPass = false;
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                command.ExecuteNonQuery();
+                
+                
+
+                connection.Close();
+                
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+
+            }
+        }
+        public bool PostPassHash(User user)
+        {
+            string sql = "Update moviedb.[dbo].[Users] set [passwordHash] = '"+ user.hash + "' where username = '" + user.username + "'";
+            try
+            {
+                
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+                bool isCorrectPass = false;
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                command.ExecuteNonQuery();
+                
+                
+
+                connection.Close();
+                
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
 
             }
         }

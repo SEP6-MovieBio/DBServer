@@ -13,10 +13,9 @@ namespace DBServer.DBAccess
         private string connectionString;
         public DBContext()
         {
-            //creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
-            creds = new NetworkCredential("ad","ThisisSep6");
-            connectionString = "Data Source=dbsep6.database.windows.net;initial Catalog=moviedb";
-            //connectionString = Environment.GetEnvironmentVariable("connString");
+            creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
+            
+            connectionString = Environment.GetEnvironmentVariable("connString");
             
         }
 

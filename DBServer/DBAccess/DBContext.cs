@@ -245,5 +245,49 @@ namespace DBServer.DBAccess
 
             }
         }
+        public string GetStarRating(string starId)
+        {
+            string rating = "";
+            string sql = "SELECT AVG(m.rating) FROM [dbo].[starInfo] s Left Join [dbo].[movieinfo] m on s.movieID = m.MovieID where starID = " + starId;
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    rating = reader.IsDBNull(0) ? "Unknown" : reader.GetSqlDouble(0).Value.ToString();
+                }
+                
+
+                connection.Close();
+                
+                return rating;
+            }
+            catch (Exception e)
+            {
+                return e.Message.ToString();
+                
+
+            }
+           
+        }
     }
 }

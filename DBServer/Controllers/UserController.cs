@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DBServer.DBAccess;
+using DBServer.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DBServer.Controllers
@@ -20,13 +22,18 @@ namespace DBServer.Controllers
             return dbContext.ValidateLogin(u.username, u.hash);
         }
 
-        [Route("/favoriteMovies")]
+        [Route("favoriteMovies")]
         [HttpGet]
         public async Task<IActionResult> GetFavoriteMoviesForUser([FromQuery] string username)
         {
             DBContext dbContext = new DBContext();
-            dbContext.GetFavoriteMovieIDs(username);
-            return new OkObjectResult();
+            List<string> iDs = dbContext.GetFavoriteMovieIDs(username);
+            List<Movie> movies = new List<Movie>();
+            foreach (string id in iDs)
+            {
+                movies.Add(await dbContext.GetMovieByID(Int32.Parse(id)));
+            }
+            return new OkObjectResult(movies);
         }
 
         [Route("/userInfo")]

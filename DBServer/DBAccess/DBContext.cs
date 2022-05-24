@@ -82,8 +82,6 @@ namespace DBServer.DBAccess
             string sql = $"  select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
             try
             {
-                NetworkCredential creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
-
 
                 string connectionString;
                 SqlConnection connection;
@@ -146,7 +144,6 @@ namespace DBServer.DBAccess
             string sql = $"select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [title] like '%{randchar}%'";
             try
             {
-                NetworkCredential creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
 
                 string connectionString;
                 SqlConnection connection;
@@ -225,9 +222,48 @@ namespace DBServer.DBAccess
         
         
 
-        public List<Movie> GetFavoriteMovieIDs(string username)
+        public List<string> GetFavoriteMovieIDs(string username)
         {
+            List<string> ids = new List<string>();
+            string sql = "SELECT [MovieID] FROM [dbo].[FavoriteMovies] where [User] = '" + username + "'";
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
             
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ids.Add(reader.IsDBNull(0)?"Unknown":reader.GetInt32(0).ToString());
+                }
+
+                connection.Close();
+                
+                return ids;
+            }
+            catch (Exception e)
+            {
+                ids.Add(e.Message);
+                return ids;
+
+            }
         }
 
         public bool ValidateLogin(string usernameToBeValidated, string hash)

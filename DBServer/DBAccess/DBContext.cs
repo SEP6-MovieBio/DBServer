@@ -107,7 +107,7 @@ namespace DBServer.DBAccess
                 }
                     
                 connection.Close();
-                
+                /*
                 connection.Open();
                 string ids = "(";
                 string realids = "";
@@ -144,7 +144,12 @@ namespace DBServer.DBAccess
                 }
 
                 connection.Close();
-                
+                */
+                foreach (int id in movieIds)
+                {
+                   Movie movie = await GetMovieByID(id);
+                   list.Add(movie);
+                }
                 return list;
             }
             catch (Exception e)

@@ -151,8 +151,9 @@ namespace DBServer.DBAccess
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e);
-
-                return list;
+                List<Movie> errorlist = new List<Movie>();
+                errorlist.Add(new Movie(movieTitle: e.Message));
+                return errorlist;
 
             }
            

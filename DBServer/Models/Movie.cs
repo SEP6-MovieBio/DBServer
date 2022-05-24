@@ -36,7 +36,7 @@ namespace DBServer.Models
             this.RatingBasedOnActors = 0;
             this.Reviews = null;
         }
-        public Movie(int movieId, string movieTitle, int year,List<string> director,float rating, int votes, float ratingBasedOnActors, List<MovieReview> reviews)
+        public Movie(int movieId = 0, string movieTitle = null, int year = 0,List<string> director = null,float rating = 0, int votes = 0, float ratingBasedOnActors = 0, List<MovieReview> reviews = null)
         {
             this.MovieId = movieId;
             this.MovieTitle = movieTitle;

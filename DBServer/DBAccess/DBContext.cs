@@ -105,7 +105,7 @@ namespace DBServer.DBAccess
                     Movie movie = new Movie(
                         reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
                         reader.IsDBNull(1) ? "Unknown" : reader.GetString(1),
-                        reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
+                        reader.IsDBNull(2) ? 0 : reader.GetInt32(2),
                         directors,
                         reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value,
                         reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
@@ -166,7 +166,7 @@ namespace DBServer.DBAccess
                     movie = new Movie(
                         reader.IsDBNull(0)?0:reader.GetInt32(0),
                         reader.IsDBNull(1)?"Unknown":reader.GetString(1),
-                        reader.IsDBNull(2)? 0: reader.GetDecimal(2),
+                        reader.IsDBNull(2)? 0: reader.GetInt32(2),
                         directors,
                         reader.IsDBNull(4)?0:reader.GetSqlSingle(4).Value,
                         reader.IsDBNull(5)?0:reader.GetInt32(5),
@@ -246,7 +246,7 @@ namespace DBServer.DBAccess
                         movie = new Movie(
                             reader.IsDBNull(0)?0:reader.GetInt32(0),
                             reader.IsDBNull(1)?"Unknown":reader.GetString(1),
-                            reader.IsDBNull(2)? 0: reader.GetDecimal(2),
+                            reader.IsDBNull(2)? 0: reader.GetInt32(2),
                             directors,
                             reader.IsDBNull(4)?0:reader.GetSqlSingle(4).Value,
                             reader.IsDBNull(5)?0:reader.GetInt32(5),

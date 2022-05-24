@@ -5,6 +5,7 @@ using System.Net;
 using System.Security;
 using System.Threading.Tasks;
 using DBServer.Models;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace DBServer.DBAccess
 {
@@ -73,10 +74,12 @@ namespace DBServer.DBAccess
         
         public async Task<List<Movie>> GetTop200Movies()
         {
+            List<int> movieIds = new List<int>();
             List<Movie> list = new List<Movie>();
             List<MovieReview> reviews = new List<MovieReview>();
+            int movieid = 0;
             
-            string sql = "select top 200 [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] order by [rating] desc";
+            string sql = "select distinct top 200 [id] from [dbo].[movieInfo] order by [rating] desc";
             try
             {
 
@@ -93,8 +96,33 @@ namespace DBServer.DBAccess
                 SqlDataReader reader;
 
                 connection.Open();
-                
                 command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    movieid = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    movieIds.Add(movieid);
+                }
+                    
+                connection.Close();
+                
+                connection.Open();
+                string ids = "(";
+                string realids = "";
+                foreach (int id in movieIds)
+                {
+                    ids += id+",";
+                }
+                Char[] array;
+                array = ids.ToCharArray();
+                array[array.Length-1] = ')';
+                realids = array.ToString();
+                
+                string sql2 = "select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] in " + realids;
+
+                command = new SqlCommand(sql2, connection);
             
                 reader = command.ExecuteReader();
 
@@ -138,7 +166,7 @@ namespace DBServer.DBAccess
             
             //string sql = $"Select id, m.title, m.[year], director, rating, votes, s.star from dbo.movies m inner join dbo.movieInfo mi on mi.title like m.title and  mi.[year] = m.[year] left join dbo.starInfo s on s.movieAppearedIn like m.title where id = {id}";
 
-            string sql = $"  select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
+            string sql = $"select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
             try
             {
 

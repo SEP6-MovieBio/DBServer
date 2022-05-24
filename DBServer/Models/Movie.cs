@@ -54,7 +54,7 @@ namespace DBServer.Models
         [JsonPropertyName("movieTitle")]
         public string MovieTitle { get; set; }
 
-        [JsonPropertyName("year")]
+        [JsonPropertyName("Year")]
         public decimal Year { get; set; }
 
         /*

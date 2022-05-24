@@ -76,7 +76,7 @@ namespace DBServer.DBAccess
             List<Movie> list = new List<Movie>();
             List<MovieReview> reviews = new List<MovieReview>();
             
-            string sql = $"select top 200 [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] order by [rating] desc";
+            string sql = "select top 200 [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] order by [rating] desc";
             try
             {
 

@@ -18,11 +18,14 @@
       }
     },
     "DBServer": {
+      "_URLSAFE": "https://localhost:5002;http://localhost:5003",
+      "_URLSAFE2": "https://moviebiodb.azurewebsites.net/MovieInfo;http://localhost:5003",
+
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "applicationUrl": "https://localhost:5002;http://localhost:5003",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

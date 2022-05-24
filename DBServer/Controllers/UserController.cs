@@ -20,6 +20,15 @@ namespace DBServer.Controllers
             return dbContext.ValidateLogin(u.username, u.hash);
         }
 
+        [Route("/favoriteMovies")]
+        [HttpGet]
+        public async Task<IActionResult> GetFavoriteMoviesForUser([FromQuery] string username)
+        {
+            DBContext dbContext = new DBContext();
+            dbContext.GetFavoriteMovieIDs(username);
+            return new OkObjectResult();
+        }
+
         [Route("/userInfo")]
         [HttpGet]
         public async Task<IActionResult> GetInfo([FromQuery] string username)

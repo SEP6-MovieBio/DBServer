@@ -66,6 +66,11 @@ namespace DBServer.DBAccess
            
         }
 
+        public List<Movie> GetFavoriteMovieIDs(string username)
+        {
+            
+        }
+
         public bool ValidateLogin(string usernameToBeValidated, string hash)
         {
             string sql = "Select passwordHash from moviedb.dbo.Users where username = '" + usernameToBeValidated + "'";

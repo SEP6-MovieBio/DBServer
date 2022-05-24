@@ -21,6 +21,24 @@ namespace DBServer.Controllers
                         return dbContext.GetMovieInfo();
                 }
                 */
+                
+                [HttpGet]
+                [Route("top200Movies")]
+                public async Task<ActionResult<List<Movie>>> GetTop200Movies()
+                {
+                        try
+                        {
+                                List<Movie> top200Movies = await dbContext.GetTop200Movies();
+
+                                return Ok(top200Movies);
+                        }
+                        catch (Exception e)
+                        {
+                                Console.WriteLine(e);
+                                throw;
+                        } 
+                }
+                
                 [HttpGet]
                 [Route("RandomChar")]
                 public async Task<ActionResult<Movie>> GetMovieByRandChar([FromQuery] char randChar)

@@ -74,6 +74,65 @@ namespace DBServer.DBAccess
            
         }
         
+        public async Task<List<Movie>> GetTop200Movies()
+        {
+            List<Movie> list = new List<Movie>();
+            List<MovieReview> reviews = new List<MovieReview>();
+            
+            string sql = $"select top 200 [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] order by [rating] desc";
+            try
+            {
+
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+                
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {            
+                    List<string> directors = new List<string>();
+                    directors.Add(reader.IsDBNull(3)?"Unknown":reader.GetString(3));
+                    Movie movie = new Movie(
+                        reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                        reader.IsDBNull(1) ? "Unknown" : reader.GetString(1),
+                        reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
+                        directors,
+                        reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value,
+                        reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
+                        0,
+                        reviews
+                    );
+                    list.Add(movie);
+                }
+
+                connection.Close();
+                
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+
+                return list;
+
+            }
+           
+        }
+        
         public async Task<Movie> GetMovieByID(int id)
         {
             Movie movie = new Movie();

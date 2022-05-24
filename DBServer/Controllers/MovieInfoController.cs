@@ -22,12 +22,12 @@ namespace DBServer.Controllers
                 }
                 */
                 [HttpGet]
-                [Route("movieId")]
-                public async Task<ActionResult<Movie>> GetMovieById([FromQuery] int id)
+                [Route("RandomChar")]
+                public async Task<ActionResult<Movie>> GetMovieByRandChar([FromQuery] char randChar)
                 {
                         try
                         {
-                                Movie movie = await dbContext.GetMovieById(id);
+                                Movie movie = await dbContext.GetMovieByRandChar(randChar);
                                 return Ok(movie);
                         }
                         catch (Exception e)

@@ -10,7 +10,7 @@ namespace DBServer.Controllers
     {
         [Route("rating")]
         [HttpGet]
-        public async Task<IActionResult> GetInfo([FromQuery] string actorID)
+        public async Task<IActionResult> GetRating([FromQuery] string actorID)
         {
             DBContext dbContext = new DBContext();
             return new OkObjectResult(dbContext.GetStarRating(actorID));

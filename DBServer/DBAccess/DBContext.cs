@@ -13,10 +13,12 @@ namespace DBServer.DBAccess
     {
         private NetworkCredential creds;
         private string connectionString;
+
         public DBContext()
         {
-            creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
-            
+            creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),
+                Environment.GetEnvironmentVariable("DbPassword"));
+
             connectionString = Environment.GetEnvironmentVariable("connString");
             
         }
@@ -86,6 +88,8 @@ namespace DBServer.DBAccess
                 SqlConnection connection;
                 SecureString secureString = creds.SecurePassword;
                 secureString.MakeReadOnly();
+
+
                 connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
             
                 
@@ -103,16 +107,53 @@ namespace DBServer.DBAccess
                     movieid = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
                     movieIds.Add(movieid);
                 }
-
+                    
                 connection.Close();
-                
-                
+                /*
+                connection.Open();
+                string ids = "(";
+                string realids = "";
                 foreach (int id in movieIds)
                 {
-                   Movie movie = await GetMovieByID(id);
-                   list.Add(movie);
+                    ids += id+",";
+                }
+                Char[] array;
+                array = ids.ToCharArray();
+                array[array.Length-1] = ')';
+                realids = array.ToString();
+                
+                string sql2 = "select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] in " + realids;
+
+                command = new SqlCommand(sql2, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {            
+                    List<string> directors = new List<string>();
+                    directors.Add(reader.IsDBNull(3)?"Unknown":reader.GetString(3));
+                    Movie movie = new Movie(
+                        reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                        reader.IsDBNull(1) ? "Unknown" : reader.GetString(1),
+                        reader.IsDBNull(2) ? 0 : Decimal.ToInt32(reader.GetDecimal(2)),
+                        directors,
+                        reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value,
+                        reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
+                        0,
+                        reviews
+                    );
+                    list.Add(movie);
+                }
+
+                connection.Close();
+                */
+                foreach (int id in movieIds)
+                {
+                    Movie movie = await GetMovieByID(id);
+                    list.Add(movie);
                 }
                 
+
                 return list;
             }
             catch (Exception e)
@@ -135,7 +176,8 @@ namespace DBServer.DBAccess
             
             //string sql = $"Select id, m.title, m.[year], director, rating, votes, s.star from dbo.movies m inner join dbo.movieInfo mi on mi.title like m.title and  mi.[year] = m.[year] left join dbo.starInfo s on s.movieAppearedIn like m.title where id = {id}";
 
-            string sql = $"select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
+            string sql =
+                $"select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
             try
             {
                 
@@ -325,6 +367,7 @@ namespace DBServer.DBAccess
                 {
                     rowCount = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
                 }
+
                 int randInt = GetRandomInt(rowCount);
 
                 connection.Close();
@@ -337,7 +380,7 @@ namespace DBServer.DBAccess
                 int counter = 0;
                 while (reader.Read())
                 {
-                    if (counter==randInt)
+                    if (counter == randInt)
                     {
                         directors.Add(reader.IsDBNull(3)?"Unknown":reader.GetString(3));
                         movie = new Movie(
@@ -370,13 +413,14 @@ namespace DBServer.DBAccess
 
         }
 
-        private static int GetRandomInt(int max){
+        private static int GetRandomInt(int max)
+        {
             Random random = new Random();
             int number = random.Next(0, max);
             return number;
         }
-        
-        
+
+
 
         public List<string> GetFavoriteMovieIDs(string username)
         {
@@ -422,7 +466,6 @@ namespace DBServer.DBAccess
             }
         }
 
-        
         public bool ValidateLogin(string usernameToBeValidated, string hash)
         {
             string sql = "Select passwordHash from moviedb.dbo.Users where username = '" + usernameToBeValidated + "'";
@@ -645,6 +688,95 @@ namespace DBServer.DBAccess
 
             }
            
+        }
+
+        public object GetDirectorRating(string directorId)
+        {
+            string rating = "";
+            string sql = "SELECT AVG(m.rating) FROM [dbo].[movieInfo] m where DirectorID = " + directorId;
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    rating = reader.IsDBNull(0) ? "Unknown" : reader.GetSqlDouble(0).Value.ToString();
+                }
+                
+
+                connection.Close();
+                
+                return rating;
+            }
+            catch (Exception e)
+            {
+                return e.Message.ToString();
+                
+
+            }
+        }
+
+        public List<string> GetStarsInMovie(int movieid)
+        {
+            List<string> ids = new List<string>();
+            
+            string sql = "SELECT [StarID] FROM [dbo].[starInfo] where movieID = " + movieid;
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ids.Add(reader.IsDBNull(0)?"Unknown":reader.GetInt32(0).ToString());
+                }
+
+                connection.Close();
+                
+                return ids;
+            }
+            catch (Exception e)
+            {
+                ids.Add(e.Message);
+                return ids;
+
+            }
         }
     }
 }

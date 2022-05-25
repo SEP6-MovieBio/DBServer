@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -30,6 +30,18 @@ namespace DBServer.Controllers
                                 throw;
                         } 
                 }
-
+                
+                [Route("rating")]
+                [HttpGet]
+                public async Task<IActionResult> GetRating([FromQuery] string directorID)
+                {
+                        DBContext dbContext = new DBContext();
+                        return new OkObjectResult(dbContext.GetDirectorRating(directorID));
+                }
         }
+
+
+  
+        
+    
 }

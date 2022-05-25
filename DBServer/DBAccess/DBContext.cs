@@ -327,7 +327,7 @@ namespace DBServer.DBAccess
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e);
 
-                return new Director();
+                return new Director(name: e.Message);
             }
 
         }

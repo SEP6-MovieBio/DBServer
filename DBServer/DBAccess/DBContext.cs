@@ -86,8 +86,6 @@ namespace DBServer.DBAccess
                 SqlConnection connection;
                 SecureString secureString = creds.SecurePassword;
                 secureString.MakeReadOnly();
-                
-
                 connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
             
                 
@@ -144,10 +142,7 @@ namespace DBServer.DBAccess
             string sql = $"  select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
             try
             {
-                NetworkCredential creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
-
-
-                string connectionString;
+                
                 SqlConnection connection;
                 SecureString secureString = creds.SecurePassword;
                 secureString.MakeReadOnly();
@@ -195,7 +190,7 @@ namespace DBServer.DBAccess
 
         }
         
-                public async Task<Movie> GetMovieByRandChar(char randchar)
+        public async Task<Movie> GetMovieByRandChar(char randchar)
             {
             Movie movie = new Movie();
             List<MovieReview> reviews = new List<MovieReview>();
@@ -208,15 +203,11 @@ namespace DBServer.DBAccess
             string sql = $"select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [title] like '%{randchar}%'";
             try
             {
-                NetworkCredential creds = new NetworkCredential(Environment.GetEnvironmentVariable("DbUsername"),Environment.GetEnvironmentVariable("DbPassword"));
 
-                string connectionString;
                 SqlConnection connection;
                 SecureString secureString = creds.SecurePassword;
                 secureString.MakeReadOnly();
-
-                connectionString = Environment.GetEnvironmentVariable("connString");
-     
+                
                 connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
 
                 SqlCommand command;
@@ -284,7 +275,6 @@ namespace DBServer.DBAccess
             int number = random.Next(0, max);
             return number;
         }
-        
         
         public bool ValidateLogin(string usernameToBeValidated, string hash)
         {

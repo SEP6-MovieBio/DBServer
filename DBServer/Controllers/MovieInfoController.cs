@@ -55,6 +55,22 @@ namespace DBServer.Controllers
                         } 
                 }
                 
+                [HttpGet]
+                [Route("MovieID")]
+                public async Task<ActionResult<Movie>> GetMovieById([FromQuery] int id)
+                {
+                        try
+                        {
+                                Movie movie = await dbContext.GetMovieByID(id);
+                                return Ok(movie);
+                        }
+                        catch (Exception e)
+                        {
+                                Console.WriteLine(e);
+                                throw;
+                        } 
+                }
+                
                 
         }
 }

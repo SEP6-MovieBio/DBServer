@@ -314,7 +314,7 @@ namespace DBServer.DBAccess
                         reader.IsDBNull(0)?0:reader.GetInt32(0),
                         reader.IsDBNull(1)?"Unknown":reader.GetString(1),
                         Double.Parse(GetDirectorRating(id.ToString())),
-                        reader.IsDBNull(2)?0:reader.GetInt32(2)
+                        reader.IsDBNull(2)?0:Decimal.ToInt32(reader.GetDecimal(2))
                         );
                 }
 

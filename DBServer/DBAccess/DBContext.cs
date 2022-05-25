@@ -186,6 +186,110 @@ namespace DBServer.DBAccess
 
         }
         
+        public async Task<List<Director>> GetTop20Directors()
+        {
+            List<int> directorIds = new List<int>();
+            List<Director> list = new List<Director>();
+            int directorid = 0;
+            
+            string sql = "select distinct top 20 [person_id] from [dbo].[directors]";
+            try
+            {
+
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    directorid = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    directorIds.Add(directorid);
+                }
+
+                connection.Close();
+                
+                
+                foreach (int id in directorIds)
+                {
+                    Director director = await GetDirectorByID(id);
+                    list.Add(director);
+                }
+                
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+                List<Director> errorlist = new List<Director>();
+                errorlist.Add(new Director(name: e.Message));
+                return errorlist;
+
+            }
+           
+        }
+        
+        
+        public async Task<Director> GetDirectorByID(int id)
+        {
+            Director director = new Director();
+            
+            string sql = $"select [id], [name], [birth] from [dbo].[people] where [id] = {id}";
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connectionString = Environment.GetEnvironmentVariable("connString");
+     
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+                
+                while(reader.Read())
+                {
+                    director = new Director(
+                        reader.IsDBNull(0)?0:reader.GetInt32(0),
+                        reader.IsDBNull(1)?"Unknown":reader.GetString(1),
+                        0,
+                        reader.IsDBNull(2)?0:reader.GetInt32(2)
+                        );
+                }
+
+                connection.Close();
+                
+                return director;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+
+                return new Director();
+            }
+
+        }
+        
         public async Task<Movie> GetMovieByRandChar(char randchar)
             {
             Movie movie = new Movie();

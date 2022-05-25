@@ -313,7 +313,7 @@ namespace DBServer.DBAccess
                     director = new Director(
                         reader.IsDBNull(0)?0:reader.GetInt32(0),
                         reader.IsDBNull(1)?"Unknown":reader.GetString(1),
-                        0,
+                        Double.Parse(GetDirectorRating(id.ToString())),
                         reader.IsDBNull(2)?0:reader.GetInt32(2)
                         );
                 }
@@ -690,7 +690,7 @@ namespace DBServer.DBAccess
            
         }
 
-        public object GetDirectorRating(string directorId)
+        public string GetDirectorRating(string directorId)
         {
             string rating = "";
             string sql = "SELECT AVG(m.rating) FROM [dbo].[movieInfo] m where DirectorID = " + directorId;

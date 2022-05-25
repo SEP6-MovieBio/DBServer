@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Security;
 using System.Threading.Tasks;
 using DBServer.Models;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace DBServer.DBAccess
 {
@@ -76,10 +74,12 @@ namespace DBServer.DBAccess
         
         public async Task<List<Movie>> GetTop200Movies()
         {
+            List<int> movieIds = new List<int>();
             List<Movie> list = new List<Movie>();
             List<MovieReview> reviews = new List<MovieReview>();
+            int movieid = 0;
             
-            string sql = $"select top 200 [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] order by [rating] desc";
+            string sql = "select distinct top 200 [MovieID], [rating] from [dbo].[movieInfo] order by [rating] desc";
             try
             {
 
@@ -94,29 +94,24 @@ namespace DBServer.DBAccess
                 SqlDataReader reader;
 
                 connection.Open();
-                
                 command = new SqlCommand(sql, connection);
             
                 reader = command.ExecuteReader();
 
                 while (reader.Read())
-                {            
-                    List<string> directors = new List<string>();
-                    directors.Add(reader.IsDBNull(3)?"Unknown":reader.GetString(3));
-                    Movie movie = new Movie(
-                        reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
-                        reader.IsDBNull(1) ? "Unknown" : reader.GetString(1),
-                        reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
-                        directors,
-                        reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value,
-                        reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
-                        0,
-                        reviews
-                    );
-                    list.Add(movie);
+                {
+                    movieid = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    movieIds.Add(movieid);
                 }
 
                 connection.Close();
+                
+                
+                foreach (int id in movieIds)
+                {
+                   Movie movie = await GetMovieByID(id);
+                   list.Add(movie);
+                }
                 
                 return list;
             }
@@ -124,8 +119,9 @@ namespace DBServer.DBAccess
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e);
-
-                return list;
+                List<Movie> errorlist = new List<Movie>();
+                errorlist.Add(new Movie(movieTitle: e.Message));
+                return errorlist;
 
             }
            
@@ -139,7 +135,7 @@ namespace DBServer.DBAccess
             
             //string sql = $"Select id, m.title, m.[year], director, rating, votes, s.star from dbo.movies m inner join dbo.movieInfo mi on mi.title like m.title and  mi.[year] = m.[year] left join dbo.starInfo s on s.movieAppearedIn like m.title where id = {id}";
 
-            string sql = $"  select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
+            string sql = $"select [MovieID], [title], [year], [Director], [rating], [votes] from [dbo].[movieInfo] where [MovieID] = {id}";
             try
             {
                 
@@ -166,7 +162,7 @@ namespace DBServer.DBAccess
                     movie = new Movie(
                         reader.IsDBNull(0)?0:reader.GetInt32(0),
                         reader.IsDBNull(1)?"Unknown":reader.GetString(1),
-                        reader.IsDBNull(2)? 0: reader.GetDecimal(2),
+                        reader.IsDBNull(2)? 0: Decimal.ToInt32(reader.GetDecimal(2)),
                         directors,
                         reader.IsDBNull(4)?0:reader.GetSqlSingle(4).Value,
                         reader.IsDBNull(5)?0:reader.GetInt32(5),
@@ -243,7 +239,7 @@ namespace DBServer.DBAccess
                         movie = new Movie(
                             reader.IsDBNull(0)?0:reader.GetInt32(0),
                             reader.IsDBNull(1)?"Unknown":reader.GetString(1),
-                            reader.IsDBNull(2)? 0: reader.GetDecimal(2),
+                            reader.IsDBNull(2)? 0: Decimal.ToInt32(reader.GetDecimal(2)),
                             directors,
                             reader.IsDBNull(4)?0:reader.GetSqlSingle(4).Value,
                             reader.IsDBNull(5)?0:reader.GetInt32(5),
@@ -275,6 +271,53 @@ namespace DBServer.DBAccess
             int number = random.Next(0, max);
             return number;
         }
+        
+        
+
+        public List<string> GetFavoriteMovieIDs(string username)
+        {
+            List<string> ids = new List<string>();
+            string sql = "SELECT [MovieID] FROM [dbo].[FavoriteMovies] where [User] = '" + username + "'";
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ids.Add(reader.IsDBNull(0)?"Unknown":reader.GetInt32(0).ToString());
+                }
+
+                connection.Close();
+                
+                return ids;
+            }
+            catch (Exception e)
+            {
+                ids.Add(e.Message);
+                return ids;
+
+            }
+        }
+
         
         public bool ValidateLogin(string usernameToBeValidated, string hash)
         {

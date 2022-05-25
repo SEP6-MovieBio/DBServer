@@ -36,7 +36,7 @@ namespace DBServer.Models
             this.RatingBasedOnActors = 0;
             this.Reviews = null;
         }
-        public Movie(int movieId, string movieTitle, decimal year,List<string> director,float rating, int votes, float ratingBasedOnActors, List<MovieReview> reviews)
+        public Movie(int movieId = 0, string movieTitle = null, int year = 0,List<string> director = null,float rating = 0, int votes = 0, float ratingBasedOnActors = 0, List<MovieReview> reviews = null)
         {
             this.MovieId = movieId;
             this.MovieTitle = movieTitle;
@@ -54,8 +54,8 @@ namespace DBServer.Models
         [JsonPropertyName("movieTitle")]
         public string MovieTitle { get; set; }
 
-        [JsonPropertyName("year")]
-        public decimal Year { get; set; }
+        [JsonPropertyName("Year")]
+        public int Year { get; set; }
 
         /*
         [JsonPropertyName("imageSource")]

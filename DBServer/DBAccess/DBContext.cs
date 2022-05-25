@@ -585,5 +585,94 @@ namespace DBServer.DBAccess
             }
            
         }
+
+        public object GetDirectorRating(string directorId)
+        {
+            string rating = "";
+            string sql = "SELECT AVG(m.rating) FROM [dbo].[movieInfo] m where DirectorID = " + directorId;
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    rating = reader.IsDBNull(0) ? "Unknown" : reader.GetSqlDouble(0).Value.ToString();
+                }
+                
+
+                connection.Close();
+                
+                return rating;
+            }
+            catch (Exception e)
+            {
+                return e.Message.ToString();
+                
+
+            }
+        }
+
+        public List<string> GetStarsInMovie(int movieid)
+        {
+            List<string> ids = new List<string>();
+            
+            string sql = "SELECT [StarID] FROM [dbo].[starInfo] where movieID = " + movieid;
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ids.Add(reader.IsDBNull(0)?"Unknown":reader.GetInt32(0).ToString());
+                }
+
+                connection.Close();
+                
+                return ids;
+            }
+            catch (Exception e)
+            {
+                ids.Add(e.Message);
+                return ids;
+
+            }
+        }
     }
 }

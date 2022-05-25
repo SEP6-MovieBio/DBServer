@@ -6,14 +6,14 @@ namespace DBServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ActorController
+    public class Director
     {
         [Route("rating")]
         [HttpGet]
-        public async Task<IActionResult> GetRating([FromQuery] string actorID)
+        public async Task<IActionResult> GetRating([FromQuery] string directorID)
         {
             DBContext dbContext = new DBContext();
-            return new OkObjectResult(dbContext.GetStarRating(actorID));
+            return new OkObjectResult(dbContext.GetDirectorRating(directorID));
         }
     }
 }

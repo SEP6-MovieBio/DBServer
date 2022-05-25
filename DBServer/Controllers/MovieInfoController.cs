@@ -55,6 +55,33 @@ namespace DBServer.Controllers
                         } 
                 }
                 
+                [HttpGet]
+                [Route("ratingByActor")]
+                public async Task<ActionResult<double>> GetMovieRatingByActorRating([FromQuery] int movieid)
+                {
+                        try
+                        {
+                                Movie movie = await dbContext.GetMovieByID(movieid);
+
+
+                                List<string> StarIDs = dbContext.GetStarsInMovie(movieid);
+
+                                double rating = 0;
+                                foreach (string id in StarIDs)
+                                { 
+                                     rating += Double.Parse(dbContext.GetStarRating(id));
+                                }
+
+                                rating = rating / StarIDs.Count;
+                                
+                                return Ok(rating);
+                        }
+                        catch (Exception e)
+                        {
+                                Console.WriteLine(e);
+                                throw;
+                        } 
+                }
                 
         }
 }

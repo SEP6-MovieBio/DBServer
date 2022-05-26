@@ -332,6 +332,109 @@ namespace DBServer.DBAccess
 
         }
         
+        public async Task<List<Actor>> GetTop20Actors()
+        {
+            List<int> actorIds = new List<int>();
+            List<Actor> list = new List<Actor>();
+            int actorId = 0;
+            
+            string sql = "select distinct top 20 [person_id] from [dbo].[stars]";
+            try
+            {
+
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    actorId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    actorIds.Add(actorId);
+                }
+
+                connection.Close();
+                
+                
+                foreach (int id in actorIds)
+                {
+                    Actor actor = await GetActorByID(id);
+                    list.Add(actor);
+                }
+                
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+                List<Actor> errorlist = new List<Actor>();
+                errorlist.Add(new Actor(name: e.Message));
+                return errorlist;
+
+            }
+           
+        }
+        
+        public async Task<Actor> GetActorByID(int id)
+        {
+            Actor actor = new Actor();
+            
+            string sql = $"select [id], [name], [birth] from [dbo].[people] where [id] = {id}";
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connectionString = Environment.GetEnvironmentVariable("connString");
+     
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+                
+                while(reader.Read())
+                {
+                    actor = new Actor(
+                        reader.IsDBNull(0)?0:reader.GetInt32(0),
+                        reader.IsDBNull(1)?"Unknown":reader.GetString(1),
+                        Double.Parse(GetStarRating(id.ToString())),
+                        reader.IsDBNull(2)?0:Decimal.ToInt32(reader.GetDecimal(2))
+                    );
+                }
+
+                connection.Close();
+                
+                return actor;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+
+                return new Actor(name: e.Message);
+            }
+
+        }
+        
         public async Task<Movie> GetMovieByRandChar(char randchar)
             {
             Movie movie = new Movie();

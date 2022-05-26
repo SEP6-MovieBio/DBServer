@@ -271,8 +271,6 @@ namespace DBServer.DBAccess
             int number = random.Next(0, max);
             return number;
         }
-        
-        
 
         public List<string> GetFavoriteMovieIDs(string username)
         {

@@ -23,7 +23,7 @@ namespace DBServer.Controllers
         
         [HttpGet]
         [Route("top20Actors")]
-        public async Task<ActionResult<List<Actor>>> GetTop20Directors()
+        public async Task<ActionResult<List<Actor>>> GetTop20Actors()
         {
             try
             {

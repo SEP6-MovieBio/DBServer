@@ -533,9 +533,9 @@ namespace DBServer.DBAccess
 
                 while (reader.Read())
                 {
-                    user = new User();
-                    user.Username = reader.IsDBNull(1) ? "Unknown" : reader.GetString(1);
-                    user.Password = reader.IsDBNull(2) ? "Unknown" : reader.GetString(2);
+                    user.Username = reader.IsDBNull(0) ? "Unknown" : reader.GetString(0);
+                    user.Password = reader.IsDBNull(1) ? "Unknown" : reader.GetString(1);
+                    user.SecurityLevel = 1; //TODO: Fix on database
                 }
 
                 connection.Close();

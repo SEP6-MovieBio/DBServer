@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using DBServer.DBAccess;
 using DBServer.Models;
@@ -12,21 +13,22 @@ namespace DBServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController
+    public class UserController : Controller
     {
+        private DBContext dbContext = new DBContext();
+
+        
         [HttpPost]
         public bool ValidateLogin([FromBody] JsonElement user)
         {
-            DBContext dbContext = new DBContext();
             User u = JsonSerializer.Deserialize<User>(user.GetRawText());
-            return dbContext.ValidateLogin(u.username, u.hash);
+            return dbContext.ValidateLogin(u.Username, u.Password);
         }
 
         [Route("favoriteMovies")]
         [HttpGet]
         public async Task<IActionResult> GetFavoriteMoviesForUser([FromQuery] string username)
         {
-            DBContext dbContext = new DBContext();
             List<string> iDs = dbContext.GetFavoriteMovieIDs(username);
             List<Movie> movies = new List<Movie>();
             foreach (string id in iDs)
@@ -60,6 +62,47 @@ namespace DBServer.Controllers
 
             return new OkObjectResult(dbContext.PostPassHash(JsonSerializer.Deserialize<User>(user.GetRawText())));
         }
+        
+        //TESTING
+        
+        [Route("LoginCheck")]
+        [HttpGet]
+        public async Task<ActionResult<User>> GetValidatedUser([FromQuery] string username, [FromQuery] string password)
+        {
+            try
+            {
+                User user = await dbContext.GetValidatedUser(username, password);
+                //return user; 
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+                // TODO Add more exceptions? 404?
+            }
+        }
+        
+        [Route("postUser")]
+        [HttpPost]
+        public async Task<ActionResult<UserInfo>> PostCreateUser([FromBody] UserInfo userInfo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                UserInfo userToBeAdded = await dbContext.PostCreateUser(userInfo);
+                return Created($"/{userToBeAdded.Username}", userToBeAdded);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500, e.Message);
+            }
+        }
+        
         
     }
 }

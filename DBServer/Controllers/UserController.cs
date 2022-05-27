@@ -42,7 +42,6 @@ namespace DBServer.Controllers
         [HttpGet]
         public async Task<IActionResult> GetInfo([FromQuery] string username)
         {
-            DBContext dbContext = new DBContext();
             return new OkObjectResult(dbContext.GetUserInfo(username));
         }
 
@@ -50,20 +49,29 @@ namespace DBServer.Controllers
         [HttpPost]
         public async Task<IActionResult> PostInfo([FromBody] JsonElement userInfo)
         {
-            DBContext dbContext = new DBContext();
-
             return new OkObjectResult(dbContext.PostBiography(JsonSerializer.Deserialize<UserInfo>(userInfo.GetRawText())));
         }
         [Route("postHash")]
         [HttpPost]
-        public async Task<IActionResult> PostPassHash([FromBody] JsonElement user)
+        public async Task<IActionResult> PostPassHash([FromBody] UserInfo user)
         {
-            DBContext dbContext = new DBContext();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return new OkObjectResult(dbContext.PostPassHash(JsonSerializer.Deserialize<User>(user.GetRawText())));
+            try
+            {
+                bool successfull = await dbContext.PostPassHash(user);
+                return Created($"/{successfull}", successfull);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500, e.Message);
+            }
+            //return new OkObjectResult(dbContext.PostPassHash(JsonSerializer.Deserialize<User>(user.GetRawText())));
         }
-        
-        //TESTING
         
         [Route("LoginCheck")]
         [HttpGet]

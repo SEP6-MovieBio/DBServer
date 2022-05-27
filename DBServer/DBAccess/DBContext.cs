@@ -430,9 +430,11 @@ namespace DBServer.DBAccess
             }
         }
 
-        public bool PostPassHash(User user)
+        public async Task<bool> PostPassHash(UserInfo user)
         {
-            string sql = "Update moviedb.[dbo].[Users] set [passwordHash] = '" + user.Password +
+            string hashPassword = Hashing.GetHashString(user.Password);
+
+            string sql = "Update moviedb.[dbo].[Users] set [passwordHash] = '" + hashPassword +
                          "' where username = '" + user.Username + "'";
             try
             {
@@ -507,12 +509,13 @@ namespace DBServer.DBAccess
             }
         }
 
-        // TESTING
         public async Task<User> GetValidatedUser(string username, string password)
         {
             User user = new User();
+            string hashPassword = Hashing.GetHashString(password);
+
             string sql =
-                $"select [username], [passwordHash] from [dbo].[Users] where [username] ='{username}' and [passwordHash] ='{password}'";
+                $"select [username], [passwordHash] from [dbo].[Users] where [username] ='{username}' and [passwordHash] ='{hashPassword}'";
             try
             {
                 SqlConnection connection;
@@ -599,6 +602,7 @@ namespace DBServer.DBAccess
         private void CreateUser(UserInfo user)
         {
             string hashPassword = Hashing.GetHashString(user.Password);
+
             string sqlUser =
                 $"INSERT INTO [dbo].[Users](username, passwordHash) VALUES ('{user.Username}', '{hashPassword}');";
             try

@@ -75,6 +75,7 @@ namespace DBServer.Controllers
                 [Route("MovieReview")]
                 public async Task<ActionResult<MovieReview>> GetMovieReviewByMovieID([FromBody] MovieReview review)
                 {
+                        Console.WriteLine(review.ToString());
                         if (!ModelState.IsValid)
                         {
                                 return BadRequest(ModelState);

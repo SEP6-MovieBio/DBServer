@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Net;
 using System.Security;
 using System.Threading.Tasks;
@@ -159,8 +160,16 @@ namespace DBServer.DBAccess
                         reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value,
                         reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
                         0,
-                        reviews
+                        reviews 
                     );
+                }
+
+                if (GetMovieReviews(movie.MovieId).Any())
+                {
+                    foreach (MovieReview review in GetMovieReviews(movie.MovieId))
+                    {
+                        reviews.Add(review);
+                    }                 
                 }
 
                 connection.Close();
@@ -241,6 +250,17 @@ namespace DBServer.DBAccess
 
                     counter++;
                 }
+
+                if (GetMovieReviews(movie.MovieId).Any())
+                {
+                    foreach (MovieReview review in GetMovieReviews(movie.MovieId))
+                    {
+                        reviews.Add(review);
+                    }                 
+                }
+
+
+
 
 
                 connection.Close();
@@ -622,6 +642,82 @@ namespace DBServer.DBAccess
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+            }
+        }
+
+        public async Task<MovieReview> PostReview(MovieReview review)
+        {
+            string sqlUser =
+                $"insert into dbo.MovieReviews(MovieID,Username,ReviewData,Rating) values ({review.MovieID},'{review.ReviewUsername}','{review.ReviewDescription}',{review.ReviewRating});";
+            try
+            {
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                connection.Open();
+                command = new SqlCommand(sqlUser, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                return review;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new MovieReview();
+            }        
+        }
+
+        private List<MovieReview> GetMovieReviews(int movieID)
+        {
+            string sql = $"select * from dbo.MovieReviews where MovieID = {movieID}";
+
+            List<MovieReview> reviews = new List<MovieReview>();
+            try
+            {
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connectionString = Environment.GetEnvironmentVariable("connString");
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                command = new SqlCommand(sql, connection);
+
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    MovieReview review = new MovieReview();
+                    review.ReviewID = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    review.MovieID = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+                    review.ReviewUsername = reader.IsDBNull(2) ? "Unknown" : reader.GetString(2);
+                    review.ReviewDescription = reader.IsDBNull(3) ? "Unknown" : reader.GetString(3);
+                    review.ReviewRating = reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value;
+                    reviews.Add(review);
+
+                }
+
+
+                connection.Close();
+
+                return reviews;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+
+                return new List<MovieReview>();
             }
         }
     }

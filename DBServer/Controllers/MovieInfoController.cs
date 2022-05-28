@@ -71,6 +71,26 @@ namespace DBServer.Controllers
                         } 
                 }
                 
-                
+                [HttpPost]
+                [Route("MovieReview")]
+                public async Task<ActionResult<MovieReview>> GetMovieReviewByMovieID([FromBody] MovieReview review)
+                {
+                        if (!ModelState.IsValid)
+                        {
+                                return BadRequest(ModelState);
+                        }
+
+                        try
+                        {
+                                MovieReview reviewToBeAdded = await dbContext.PostReview(review);
+                                return Created($"/{reviewToBeAdded.ReviewID}", reviewToBeAdded);
+                        }
+                        catch (Exception e)
+                        {
+                                Console.WriteLine(e);
+                                return StatusCode(500, e.Message);
+                        }
+                }
+
         }
 }

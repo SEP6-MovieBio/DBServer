@@ -31,6 +31,23 @@ namespace DBServer.Controllers
                         } 
                 }
                 
+                [HttpGet]
+                [Route("searchTop10Directors")]
+                public async Task<ActionResult<List<Director>>> SearchTop10Directors([FromQuery] string searchText)
+                {
+                        try
+                        {
+                                List<Director> top20Directors = await dbContext.SearchTop10Directors(searchText);
+
+                                return Ok(top20Directors);
+                        }
+                        catch (Exception e)
+                        {
+                                Console.WriteLine(e);
+                                throw;
+                        } 
+                }
+                
                 [Route("rating")]
                 [HttpGet]
                 public async Task<IActionResult> GetRating([FromQuery] string directorID)

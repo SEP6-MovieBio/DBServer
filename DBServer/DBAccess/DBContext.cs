@@ -435,6 +435,171 @@ namespace DBServer.DBAccess
 
         }
         
+        public async Task<List<Actor>> SearchTop10Actors(string searchText)
+        {
+            List<int> actorIds = new List<int>();
+            List<Actor> list = new List<Actor>();
+            int actorId = 0;
+            
+            string sql = $"select distinct top 10 [person_id] from [dbo].[stars] s Left Join dbo.people p on p.id = s.person_id where p.id = s.person_id and p.name like '%{searchText}%'";
+            try
+            {
+
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    actorId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    actorIds.Add(actorId);
+                }
+
+                connection.Close();
+                
+                
+                foreach (int id in actorIds)
+                {
+                    Actor actor = await GetActorByID(id);
+                    list.Add(actor);
+                }
+                
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+                List<Actor> errorlist = new List<Actor>();
+                errorlist.Add(new Actor(name: e.Message));
+                return errorlist;
+
+            }
+           
+        }
+        
+        public async Task<List<Director>> SearchTop10Directors(string searchText)
+        {
+            List<int> directorIds = new List<int>();
+            List<Director> list = new List<Director>();
+            int directorId = 0;
+            
+            string sql = $"select distinct top 10 [person_id] from [dbo].[directors] d Left Join dbo.people p on p.id = s.person_id where p.id = d.person_id and p.name like '%{searchText}%'";
+            try
+            {
+
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    directorId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    directorIds.Add(directorId);
+                }
+
+                connection.Close();
+                
+                
+                foreach (int id in directorIds)
+                {
+                    Director director = await GetDirectorByID(id);
+                    list.Add(director);
+                }
+                
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+                List<Director> errorlist = new List<Director>();
+                errorlist.Add(new Director(name: e.Message));
+                return errorlist;
+
+            }
+           
+        }
+        
+        public async Task<List<Movie>> SearchTop10Movies(string searchText)
+        {
+            List<int> movieIds = new List<int>();
+            List<Movie> list = new List<Movie>();
+            List<MovieReview> reviews = new List<MovieReview>();
+            int movieid = 0;
+            
+            string sql = $"select distinct top 10 [id] from [dbo].[movies] where title like '%{searchText}%'";
+            try
+            {
+
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    movieid = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                    movieIds.Add(movieid);
+                }
+                    
+                connection.Close();
+               
+                foreach (int id in movieIds)
+                {
+                    Movie movie = await GetMovieByID(id);
+                    list.Add(movie);
+                }
+                
+
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
+                List<Movie> errorlist = new List<Movie>();
+                errorlist.Add(new Movie(movieTitle: e.Message));
+                return errorlist;
+
+            }
+           
+        }
+        
         public async Task<Movie> GetMovieByRandChar(char randchar)
             {
             Movie movie = new Movie();

@@ -37,6 +37,23 @@ namespace DBServer.Controllers
                 throw;
             } 
         }
+        
+        [HttpGet]
+                [Route("searchTop10Actors")]
+                public async Task<ActionResult<List<Actor>>> SearchTop10Actors([FromQuery] string searchText)
+                {
+                    try
+                    {
+                        List<Actor> top20Actors = await dbContext.SearchTop10Actors(searchText);
+        
+                        return Ok(top20Actors);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    } 
+                }
     }
     
     

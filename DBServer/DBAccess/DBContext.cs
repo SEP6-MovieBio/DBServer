@@ -495,7 +495,7 @@ namespace DBServer.DBAccess
             List<Director> list = new List<Director>();
             int directorId = 0;
             
-            string sql = $"select distinct top 10 [person_id] from [dbo].[directors] d Left Join dbo.people p on p.id = s.person_id where p.id = d.person_id and p.name like '%{searchText}%'";
+            string sql = $"select distinct top 10 [person_id] from [dbo].[directors] d Left Join dbo.people p on p.id = d.person_id where p.id = d.person_id and p.name like '%{searchText}%'";
             try
             {
 

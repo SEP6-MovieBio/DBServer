@@ -1046,5 +1046,49 @@ namespace DBServer.DBAccess
 
             }
         }
+
+        public object getNicenessUser(string username)
+        {
+            string rating = "";
+            string sql = "SELECT [NicenessRatioPercentage] FROM [dbo].[UserNiceness] where [username] = '" + username + "'";
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+                
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+            
+                
+            
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                
+            
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    rating = reader.IsDBNull(0) ? "-1" : reader.GetSqlDouble(0).Value.ToString();
+                }
+                
+
+                connection.Close();
+                
+                return rating;
+            }
+            catch (Exception e)
+            {
+                return e.Message.ToString();
+                
+
+            }
+        }
     }
 }

@@ -61,5 +61,14 @@ namespace DBServer.Controllers
             return new OkObjectResult(dbContext.PostPassHash(JsonSerializer.Deserialize<User>(user.GetRawText())));
         }
         
+        [Route("Niceness")]
+        [HttpGet]
+        public async Task<IActionResult> PostPassHash([FromQuery] string username)
+        {
+            DBContext dbContext = new DBContext();
+
+            return new OkObjectResult(dbContext.getNicenessUser(username));
+        }
+        
     }
 }

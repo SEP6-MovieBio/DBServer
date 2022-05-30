@@ -941,7 +941,7 @@ namespace DBServer.DBAccess
                 reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    rating = reader.IsDBNull(0) ? "Unknown" : reader.GetSqlDouble(0).Value.ToString();
+                    rating = reader.IsDBNull(0) ? "-1" : reader.GetSqlDouble(0).Value.ToString();
                 }
                 
 

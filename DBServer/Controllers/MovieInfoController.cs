@@ -75,7 +75,6 @@ namespace DBServer.Controllers
                 [Route("MovieReview")]
                 public async Task<ActionResult<MovieReview>> GetMovieReviewByMovieID([FromBody] MovieReview review)
                 {
-                        Console.WriteLine(review.ToString());
                         if (!ModelState.IsValid)
                         {
                                 return BadRequest(ModelState);
@@ -85,6 +84,26 @@ namespace DBServer.Controllers
                         {
                                 MovieReview reviewToBeAdded = await dbContext.PostReview(review);
                                 return Created($"/{reviewToBeAdded.ReviewID}", reviewToBeAdded);
+                        }
+                        catch (Exception e)
+                        {
+                                Console.WriteLine(e);
+                                return StatusCode(500, e.Message);
+                        }
+                }
+                [HttpPatch]
+                [Route("UpdateMovieReview")]
+                public async Task<ActionResult<MovieReview>> PatchMovieReview([FromBody] MovieReview review)
+                {
+                        if (!ModelState.IsValid)
+                        {
+                                return BadRequest(ModelState);
+                        }
+
+                        try
+                        {
+                                MovieReview reviewToBeUpdated = await dbContext.PatchMovieReview(review);
+                                return Created($"/{reviewToBeUpdated.ReviewID}", reviewToBeUpdated);
                         }
                         catch (Exception e)
                         {

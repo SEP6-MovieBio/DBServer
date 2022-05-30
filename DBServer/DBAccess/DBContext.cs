@@ -160,7 +160,7 @@ namespace DBServer.DBAccess
                         reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value,
                         reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
                         0,
-                        reviews 
+                        reviews
                     );
                 }
 
@@ -169,7 +169,7 @@ namespace DBServer.DBAccess
                     foreach (MovieReview review in GetMovieReviews(movie.MovieId))
                     {
                         reviews.Add(review);
-                    }                 
+                    }
                 }
 
                 connection.Close();
@@ -256,11 +256,8 @@ namespace DBServer.DBAccess
                     foreach (MovieReview review in GetMovieReviews(movie.MovieId))
                     {
                         reviews.Add(review);
-                    }                 
+                    }
                 }
-
-
-
 
 
                 connection.Close();
@@ -668,7 +665,7 @@ namespace DBServer.DBAccess
             {
                 Console.WriteLine(e.Message);
                 return new MovieReview();
-            }        
+            }
         }
 
         private List<MovieReview> GetMovieReviews(int movieID)
@@ -704,7 +701,6 @@ namespace DBServer.DBAccess
                     review.ReviewDescription = reader.IsDBNull(3) ? "Unknown" : reader.GetString(3);
                     review.ReviewRating = reader.IsDBNull(4) ? 0 : reader.GetSqlSingle(4).Value;
                     reviews.Add(review);
-
                 }
 
 
@@ -718,6 +714,32 @@ namespace DBServer.DBAccess
                 Console.WriteLine(e);
 
                 return new List<MovieReview>();
+            }
+        }
+
+        public async Task<MovieReview> PatchMovieReview(MovieReview review)
+        {
+            string sqlUser =
+                $"  update [dbo].[MovieReviews] set ReviewData = '{review.ReviewDescription}', Rating = {review.ReviewRating} where Username = '{review.ReviewUsername}' and MovieID = {review.MovieID}";
+            try
+            {
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                connection.Open();
+                command = new SqlCommand(sqlUser, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                return review;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new MovieReview();
             }
         }
     }

@@ -1267,7 +1267,7 @@ namespace DBServer.DBAccess
         public async Task<Dictionary<string, double>> GetMovieRatingByDecade()
         {
             Dictionary<string, double> decades = new Dictionary<string, double>();
-            string sql = "SELECT [ratingsByDecade], [rating] FROM [dbo].[MovieratingbyDecade]";
+            string sql = "SELECT [ratingsByDecade], [rating] FROM [dbo].[MovieratingbyDecade] order by [rating] desc";
             try
             {
                 

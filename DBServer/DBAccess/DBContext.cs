@@ -1226,7 +1226,7 @@ namespace DBServer.DBAccess
 
         public object getNicenessUser(string username)
         {
-            string rating = "";
+            string rating = "50";
             string sql = "SELECT [NicenessRatioPercentage] FROM [dbo].[UserNiceness] where [username] = '" + username + "'";
             try
             {
@@ -1234,19 +1234,14 @@ namespace DBServer.DBAccess
                 SqlConnection connection;
                 SecureString secureString = creds.SecurePassword;
                 secureString.MakeReadOnly();
-                
 
                 connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
-            
-                
-            
+
                 SqlCommand command;
                 SqlDataReader reader;
 
                 connection.Open();
 
-                
-            
                 command = new SqlCommand(sql, connection);
             
                 reader = command.ExecuteReader();

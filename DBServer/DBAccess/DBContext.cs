@@ -75,7 +75,7 @@ namespace DBServer.DBAccess
             List<MovieReview> reviews = new List<MovieReview>();
             int movieid = 0;
 
-            string sql = "select distinct top 200 [MovieID], [rating] from [dbo].[movieInfo] order by [rating] desc";
+            string sql = "select distinct top 20 [MovieID], [rating] from [dbo].[movieInfo] order by [rating] desc";
             try
             {
                 SqlConnection connection;

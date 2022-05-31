@@ -1,8 +1,23 @@
-﻿namespace DBServer.DBAccess
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace DBServer.DBAccess
 {
-    public class UserInfo
+    public class UserInfo : User
     {
-        public UserInfo(string username = null, string phoneNumber = null, bool phoneIsHidden = default, string email = null, bool emailIsHidden = default, string biography = null)
+        
+        public UserInfo( string phoneNumber = null, bool phoneIsHidden = default, string email = null, bool emailIsHidden = default, string biography = null)
+        {
+            this.PhoneNumber = phoneNumber;
+            this.PhoneIsHidden = phoneIsHidden;
+            this.Email = email;
+            this.EmailIsHidden = emailIsHidden;
+            this.Biography = biography;
+        }
+        
+
+        /*
+        public UserInfo(string username, string phoneNumber, bool phoneIsHidden, string email, bool emailIsHidden, string biography)
         {
             this.username = username;
             this.phoneNumber = phoneNumber;
@@ -11,12 +26,22 @@
             this.emailIsHidden = emailIsHidden;
             this.biography = biography;
         }
-
-        public string username { get; set; }
-        public string phoneNumber { get; set; }
-        public bool phoneIsHidden { get; set; }
-        public string email { get; set; }
-        public bool emailIsHidden { get; set; }
-        public string biography { get; set; }
+        */
+        
+        //public string username { get; set; }
+        [JsonPropertyName("PhoneNumber")]
+        public string PhoneNumber { get; set; }
+        
+        [JsonPropertyName("PhoneIsHidden")]
+        public bool PhoneIsHidden { get; set; }
+        
+        [JsonPropertyName("Email")]
+        public string Email { get; set; }
+        [Required]
+        [JsonPropertyName("EmailIsHidden")]
+        public bool EmailIsHidden { get; set; }
+        [JsonPropertyName("Biography")]
+        public string Biography { get; set; }
+        
     }
 }

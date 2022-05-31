@@ -781,7 +781,7 @@ namespace DBServer.DBAccess
 
         public bool PostBiography(UserInfo userInfo)
         {
-            string sql = "Update moviedb.[dbo].[UserInfo] set [biography] = '"+ userInfo.biography + "' where username = '" + userInfo.username + "'";
+            string sql = "Update moviedb.[dbo].[UserInfo] set [biography] = '"+ userInfo.Biography + "' where username = '" + userInfo.Username + "'";
             try
             {
                 SqlConnection connection;

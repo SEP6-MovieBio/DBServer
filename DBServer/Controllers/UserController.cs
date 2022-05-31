@@ -22,7 +22,7 @@ namespace DBServer.Controllers
         public bool ValidateLogin([FromBody] JsonElement user)
         {
             User u = JsonSerializer.Deserialize<User>(user.GetRawText());
-            return dbContext.ValidateLogin(u.username, u.hash);
+            return dbContext.ValidateLogin(u.Username, u.Password);
         }
 
         [Route("favoriteMovies")]

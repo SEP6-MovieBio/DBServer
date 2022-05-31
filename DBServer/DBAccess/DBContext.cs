@@ -1262,8 +1262,46 @@ namespace DBServer.DBAccess
 
             }
         }
-        
-        
-        
+
+
+        public async Task<Dictionary<string, double>> GetMovieRatingByDecade()
+        {
+            Dictionary<string, double> decades = new Dictionary<string, double>();
+            string sql = "SELECT [ratingsByDecade], [rating] FROM [dbo].[MovieratingbyDecade]";
+            try
+            {
+                
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+                command = new SqlCommand(sql, connection);
+            
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    decades.Add(reader.IsDBNull(0) ? "-1" : reader.GetString(0),reader.IsDBNull(1)? -1: reader.GetSqlDouble(1).Value);
+                }
+                
+
+                connection.Close();
+                
+                return decades;
+            }
+            catch (Exception e)
+            {
+                decades.Add(e.Message,0.0);
+                return decades;
+
+
+            }
+        }
     }
 }

@@ -158,6 +158,12 @@ namespace DBServer.Controllers
                                 return StatusCode(500, e.Message);
                         }
                 }
+                [Route("MovieRatingsByDecade")]
+                [HttpGet]
+                public async Task<IActionResult> GetMovieRatingsByDecade()
+                {
+                        return new OkObjectResult(await dbContext.GetMovieRatingByDecade());
+                }
 
         }
 }

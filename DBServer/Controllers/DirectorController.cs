@@ -32,6 +32,23 @@ namespace DBServer.Controllers
                 }
                 
                 [HttpGet]
+                [Route("getDirector")]
+                public async Task<ActionResult<Director>> GetActorById([FromQuery] int id)
+                {
+                        try
+                        {
+                                Director director = await dbContext.GetDirectorByID(id);
+
+                                return Ok(director);
+                        }
+                        catch (Exception e)
+                        {
+                                Console.WriteLine(e);
+                                throw;
+                        } 
+                }
+                
+                [HttpGet]
                 [Route("searchTop10Directors")]
                 public async Task<ActionResult<List<Director>>> SearchTop10Directors([FromQuery] string searchText)
                 {

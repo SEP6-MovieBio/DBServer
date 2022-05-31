@@ -39,6 +39,23 @@ namespace DBServer.Controllers
         }
         
         [HttpGet]
+        [Route("getActor")]
+        public async Task<ActionResult<Actor>> GetActorById([FromQuery] int id)
+        {
+            try
+            {
+                Actor actor = await dbContext.GetActorByID(id);
+
+                return Ok(actor);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            } 
+        }
+        
+        [HttpGet]
                 [Route("searchTop10Actors")]
                 public async Task<ActionResult<List<Actor>>> SearchTop10Actors([FromQuery] string searchText)
                 {

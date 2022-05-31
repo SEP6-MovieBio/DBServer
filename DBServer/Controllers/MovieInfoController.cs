@@ -75,6 +75,8 @@ namespace DBServer.Controllers
                 [Route("MovieReview")]
                 public async Task<ActionResult<MovieReview>> GetMovieReviewByMovieID([FromBody] MovieReview review)
                 {
+                        Console.WriteLine("POST");
+
                         if (!ModelState.IsValid)
                         {
                                 return BadRequest(ModelState);
@@ -95,6 +97,7 @@ namespace DBServer.Controllers
                 [Route("UpdateMovieReview")]
                 public async Task<ActionResult<MovieReview>> PatchMovieReview([FromBody] MovieReview review)
                 {
+                        Console.WriteLine("PATCHG");
                         if (!ModelState.IsValid)
                         {
                                 return BadRequest(ModelState);

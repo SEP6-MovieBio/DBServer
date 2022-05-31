@@ -642,31 +642,6 @@ namespace DBServer.DBAccess
             }
         }
 
-        public async Task<MovieReview> PostReview(MovieReview review)
-        {
-            string sqlUser =
-                $"insert into dbo.MovieReviews(MovieID,Username,ReviewData,Rating) values ({review.MovieID},'{review.ReviewUsername}','{review.ReviewDescription}',{review.ReviewRating});";
-            try
-            {
-                SqlConnection connection;
-                SecureString secureString = creds.SecurePassword;
-                secureString.MakeReadOnly();
-
-                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
-
-                SqlCommand command;
-                connection.Open();
-                command = new SqlCommand(sqlUser, connection);
-                command.ExecuteNonQuery();
-                connection.Close();
-                return review;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return new MovieReview();
-            }
-        }
 
         private List<MovieReview> GetMovieReviews(int movieID)
         {
@@ -716,6 +691,32 @@ namespace DBServer.DBAccess
                 return new List<MovieReview>();
             }
         }
+        
+        public async Task<MovieReview> PostReview(MovieReview review)
+        {
+            string sqlUser =
+                $"insert into dbo.MovieReviews(MovieID,Username,ReviewData,Rating) values ({review.MovieID},'{review.ReviewUsername}','{review.ReviewDescription}',{review.ReviewRating});";
+            try
+            {
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                connection.Open();
+                command = new SqlCommand(sqlUser, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                return review;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new MovieReview();
+            }
+        }
 
         public async Task<MovieReview> PatchMovieReview(MovieReview review)
         {
@@ -741,6 +742,31 @@ namespace DBServer.DBAccess
                 Console.WriteLine(e.Message);
                 return new MovieReview();
             }
+        }
+
+        public async Task PostFavouriteMovie(string username, int movieId)
+        {
+            Console.WriteLine($"2) String is: {username} and {movieId}");
+
+            string sqlUser = $"insert into [dbo].[FavoriteMovies] ([User],[MovieID]) VALUES ('{username}',{movieId});";
+            try
+            {
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+                SqlCommand command;
+                connection.Open();
+                command = new SqlCommand(sqlUser, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }        
         }
     }
 }

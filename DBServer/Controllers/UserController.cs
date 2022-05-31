@@ -111,6 +111,28 @@ namespace DBServer.Controllers
             }
         }
         
-        
+        [Route("postFavouriteMovie")]
+        [HttpPost]
+        public async Task<ActionResult<string>> PostFavouriteMovie([FromQuery] string username, [FromQuery] int movieID)
+        {
+            Console.WriteLine($"1)String is: {username} and {movieID}");
+            //Console.WriteLine($"1)String is: {listInfoJson}");
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await dbContext.PostFavouriteMovie(username,movieID);
+                return Created($"/{username}", username);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500, e.Message);
+            }
+        }
     }
 }

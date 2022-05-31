@@ -778,6 +778,56 @@ namespace DBServer.DBAccess
                 return userInfo;
             }
         }
+        
+        public async Task<List<UserInfo>> SearchTop10Users(string searchText)
+        {
+            UserInfo userInfo = new UserInfo();
+            List<UserInfo> users = new List<UserInfo>();
+            string sql = $"SELECT top 10 [username],[phoneNumber],[phoneIsHidden],[email],[emailIsHidden],[biography] FROM moviedb.[dbo].[UserInfo] where username like '%{searchText}%'";
+            try
+            {
+                SqlConnection connection;
+                SecureString secureString = creds.SecurePassword;
+                secureString.MakeReadOnly();
+
+
+                connection = new SqlConnection(connectionString, new SqlCredential(creds.UserName, secureString));
+
+
+                SqlCommand command;
+                SqlDataReader reader;
+
+                connection.Open();
+
+
+                command = new SqlCommand(sql, connection);
+
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    userInfo = new UserInfo(
+                        reader.IsDBNull(1) ? "Unknown" : reader.GetString(1),
+                        reader.IsDBNull(2) ? true : reader.GetBoolean(2),
+                        reader.IsDBNull(3) ? "Unknown" : reader.GetString(3),
+                        reader.IsDBNull(4) ? true : reader.GetBoolean(4),
+                        reader.IsDBNull(3) ? "" : reader.GetString(5));
+                    userInfo.Username = reader.IsDBNull(0) ? "Unknown" : reader.GetString(0);
+                    
+                    users.Add(userInfo);
+                }
+
+                connection.Close();
+
+                return users;
+            }
+            catch (Exception e)
+            {
+                List<UserInfo> errorlist = new List<UserInfo>();
+                errorlist.Add(new UserInfo(biography: e.Message));
+                return errorlist;
+            }
+        }
 
         public bool PostBiography(UserInfo userInfo)
         {

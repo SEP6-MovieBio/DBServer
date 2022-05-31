@@ -44,6 +44,23 @@ namespace DBServer.Controllers
         {
             return new OkObjectResult(dbContext.GetUserInfo(username));
         }
+        
+        [Route("/searchTop10Users")]
+        [HttpGet]
+        public async Task<ActionResult<List<UserInfo>>> SearchTop10Users([FromQuery] string searchText)
+        {
+            try
+            {
+                List<UserInfo> users = await dbContext.SearchTop10Users(searchText);
+
+                return Ok(users);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            } 
+        }
 
         [Route("postinfo")]
         [HttpPost]

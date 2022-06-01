@@ -21,7 +21,7 @@ namespace DBServer.DBAccess
 
             connectionString = Environment.GetEnvironmentVariable("connString");
         }
-
+/*
         public List<MovieInfo> GetMovieInfo()
         {
             List<MovieInfo> list = new List<MovieInfo>();
@@ -67,7 +67,7 @@ namespace DBServer.DBAccess
                 return list;
             }
         }
-
+*/
         public async Task<List<Movie>> GetTop200Movies()
         {
             List<int> movieIds = new List<int>();
@@ -691,7 +691,7 @@ namespace DBServer.DBAccess
         }
 
 
-        public bool ValidateLogin(string usernameToBeValidated, string hash)
+        /*public bool ValidateLogin(string usernameToBeValidated, string hash)
         {
             string sql = "Select passwordHash from moviedb.dbo.Users where username = '" + usernameToBeValidated + "'";
             try
@@ -732,7 +732,7 @@ namespace DBServer.DBAccess
                 return false;
             }
         }
-
+*/
         public UserInfo GetUserInfo(string username)
         {
             UserInfo userInfo = new UserInfo();

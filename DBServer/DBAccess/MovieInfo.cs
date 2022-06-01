@@ -3,7 +3,7 @@
 namespace DBServer.DBAccess
 {
     public class MovieInfo
-    {
+    {/*
         public MovieInfo(string Title, decimal Year, string Director, float Rating, int Votes)
         {
             this.Title = Title;
@@ -22,5 +22,7 @@ namespace DBServer.DBAccess
         public double Rating { get; set; }
         
         public int Votes { get; set; }
+        */
     }
+    
 }
